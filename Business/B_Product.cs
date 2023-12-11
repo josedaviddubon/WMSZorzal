@@ -18,6 +18,15 @@ namespace Business
             }
         }
 
+        
+        public static ProductEntity ProductById(string id)
+        {
+            using (var db = new ZorzalContext())
+            {
+                return db.Products.LastOrDefault(c => c.ProductId == id);
+            }
+        }
+
         public static void CreateProducts(ProductEntity oProducts)
         {
             using (var db = new ZorzalContext())
