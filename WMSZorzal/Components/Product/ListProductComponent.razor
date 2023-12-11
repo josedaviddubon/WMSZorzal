@@ -1,0 +1,64 @@
+﻿@using Entities
+@using Business
+
+
+<hr />
+
+<select class="form-control" @onchange="CategoryChange">
+    <option value="">Selecione Categoria...</option>
+    @foreach (var category in categories)
+    {
+        <option value="@category.CategoryID">@category.CategoryName</option>
+    }
+</select>
+<hr />
+<table class="table table-hover table-bordered">
+    <thead>
+        <tr>
+            <th>Referencia</th>
+            <th>Nombre Producto</th>
+            <th>Categoria</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in tempproducts)
+        {
+            <tr>
+                <td>@product.ProductId</td>
+                <td>@product.ProductName</td>
+                <td>@GetCategory(product.CategoryID)</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@Message
+
+@code {
+    List<ProductEntity> products = new List<ProductEntity>();
+    List<ProductEntity> tempproducts = new List<ProductEntity>();
+    List<CategoryEntity> categories = new List<CategoryEntity>();
+
+    string Message;
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        products = B_Product.ProductList();
+        tempproducts = products;
+        categories = B_Category.CategoryList();
+    }
+
+    private void CategoryChange(ChangeEventArgs e)
+    {
+        //Message = e.Value.ToString();   
+        tempproducts = products.Where(c => c.CategoryID == e.Value.ToString()).ToList();
+
+    }
+    string GetCategory(string CategoryId)
+    {
+        var categorias = categories.FirstOrDefault(c => c.CategoryID == CategoryId);
+        return categorias != null ? categorias.CategoryName : "No encontrado";
+    }
+
+}
