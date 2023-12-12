@@ -23,7 +23,7 @@ namespace Business
         {
             using (var db = new ZorzalContext())
             {
-                return db.Products.LastOrDefault(c => c.ProductId == id);
+                return db.Products.ToList().LastOrDefault(c => c.ProductId == id);
             }
         }
 

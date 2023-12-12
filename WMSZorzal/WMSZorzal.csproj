@@ -12,7 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Components\Category\" />
     <Folder Include="Components\InOuts\" />
     <Folder Include="Components\Storage\" />
     <Folder Include="Components\WareHouse\" />
