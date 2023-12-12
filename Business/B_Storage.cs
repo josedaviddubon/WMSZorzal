@@ -27,6 +27,16 @@ namespace Business
             }
         }
 
+        public static bool IsProductInWareHouse(string IdStorage)
+        {
+            using (var db = new ZorzalContext())
+            {
+                var product = db.Storages.ToList()
+                    .Where(s => s.StorageId== IdStorage);
+                return product.Any();
+            }
+        }
+
         public static void UpdateStorage(StorageEntity oStorages)
         {
             using (var db = new ZorzalContext())
