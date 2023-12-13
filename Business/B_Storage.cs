@@ -1,5 +1,6 @@
 ﻿using DataAccess;
 using Entities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,6 +35,18 @@ namespace Business
                 var product = db.Storages.ToList()
                     .Where(s => s.StorageId== IdStorage);
                 return product.Any();
+            }
+        }
+
+        public static List<StorageEntity> StorageProductByWareHouse(string idWareHouse)
+        {
+            using (var db = new ZorzalContext())
+            {
+                return db.Storages.
+                    Include(s=> s.Product)
+                    .Include(s=> s.Warehouse)
+                    .Where(s=> s.WarehouseID == idWareHouse)
+                    .ToList();
             }
         }
 

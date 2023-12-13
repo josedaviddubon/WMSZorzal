@@ -1,0 +1,199 @@
+﻿@using Entities
+@using Business
+
+@*<div class="form-group">
+    <select class="form-control" @onchange="OnChangeWareHouse">
+        <option value="">Seleccione una bodega...</option>
+        @foreach (var warehouse in warehouses)
+        {
+            <option value="@warehouse.WarehouseID">@warehouse.WarehouseName</option>
+        }
+    </select>
+</div>
+<hr />
+
+<EditForm Model="oInOut">
+    <div class="form-group">
+        <InputSelect class="form-control" @bind-Value="oInOut.StorageId">
+            <option value="">Seleccione un Producto...</option>
+            @foreach (var storage in storages)
+            {
+                <option value="@storage.StorageId">@storage.Product.ProductName</option>
+            }
+        </InputSelect>
+
+    </div>
+    <div class="form-group">
+        <label>Cant.</label>
+        <InputNumber class="form-control" @bind-Value="oInOut.Quantity" />
+    </div>
+    <div class="form-group">
+        <div class="form-check">
+            <input id="chkIsOut" class="form-check-input" type="checkbox" @bind="oInOut.IsOut" />
+            <label class="form-check-label" for="chkIsOut">¿Es una entrada?</label>
+        </div>
+    </div>
+
+    <input control="form-group" type="button" value="@buttonValue" @onclick="SaveInOut" />
+
+</EditForm>*@
+<div class="form-group">
+    <label for="ddlWarehouses">Bodega:</label>
+    <select id="ddlWarehouses" class="form-control" @onchange="OnChangeWareHouse">
+        <option value="">Seleccione una bodega...</option>
+        @foreach (var warehouse in warehouses)
+        {
+            <option value="@warehouse.WarehouseID">@warehouse.WarehouseName</option>
+        }
+    </select>
+</div>
+<hr />
+
+<EditForm Model="oInOut">
+    <div class="form-group">
+        <label for="ddlStorages">Producto:</label>
+        <InputSelect id="ddlStorages" class="form-control" @bind-Value="oInOut.StorageId">
+            <option value="">Seleccione un Producto...</option>
+            @foreach (var storage in storages)
+            {
+                <option value="@storage.StorageId">@storage.Product.ProductName</option>
+            }
+        </InputSelect>
+    </div>
+
+    <div class="form-group">
+        <label for="txtQuantity">Cant.:</label>
+        <InputNumber id="txtQuantity" class="form-control" @bind-Value="oInOut.Quantity" />
+    </div>
+
+    <div class="form-group">
+        <div class="form-check">
+            <input id="chkIsOut" class="form-check-input" type="checkbox" @bind="oInOut.IsOut" />
+            <label class="form-check-label" for="chkIsOut">¿Es una Entrada?</label>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <button type="button" class="btn btn-primary" @onclick="SaveInOut">@buttonValue</button>
+    </div>
+</EditForm>
+
+<div class="text-center h4">
+    @message
+</div>
+
+
+@code {
+    InputOutputEntity oInOut = new InputOutputEntity();
+
+    List<WarehouseEntity> warehouses = new List<WarehouseEntity>();
+
+    List<StorageEntity> storages = new List<StorageEntity>();
+
+
+    ProductEntity oProduct = new ProductEntity();
+
+    StorageEntity oStorage = new StorageEntity();
+
+    string buttonValue => oInOut.IsOut ? "Registrar Salida" : "Registrar Entrada";
+    string message;
+
+    protected override async Task OnInitializedAsync()
+    {
+        warehouses = B_WareHouse.WarehouseList();
+    }
+
+    private void OnChangeWareHouse(ChangeEventArgs e)
+    {
+        var idWareHouse = e.Value.ToString();
+
+        storages = B_Storage.StorageProductByWareHouse(idWareHouse);
+    }
+
+    private void SaveInOut()
+    {
+        oStorage = storages.LastOrDefault(s => s.StorageId == oInOut.StorageId);
+        oProduct = oStorage.Product;
+
+        if (oInOut.IsOut)
+        {
+            if (esMayorCero(oInOut.Quantity, oStorage.PartialQuantity))
+            {
+                oStorage.PartialQuantity = oStorage.PartialQuantity + oInOut.Quantity;
+                B_Storage.UpdateStorage(oStorage);
+
+                oProduct.TotalQuantity = oProduct.TotalQuantity + oInOut.Quantity;
+                B_Product.UpdateProducts(oProduct);
+                message = $"El producto {oProduct.ProductName} ha sido actualizado";
+            }
+            else
+            {
+                message = $"No existe la cantidad suficiente en bodega para el {oProduct.ProductName}";
+                //message = $"No existe la cantidad suficiente en bodega para el {oProduct.ProductName}";
+            }
+        }
+        else
+        {
+            oStorage.PartialQuantity = oStorage.PartialQuantity - oInOut.Quantity;
+            B_Storage.UpdateStorage(oStorage);
+
+            oProduct.TotalQuantity = oProduct.TotalQuantity - oInOut.Quantity;
+            B_Product.UpdateProducts(oProduct);
+
+            message = $"El producto {oProduct.ProductName} ha sido actualizado";
+        }
+    }
+
+        /*
+        try
+        {
+            oStorage = storages.LastOrDefault(s => s.StorageId == oInOut.StorageId);
+            oProduct = oStorage?.Product;
+
+            if (oProduct != null)
+            {
+                if (oInOut.IsOut)
+                {
+                    if (esMayorCero(oInOut.Quantity, oStorage.PartialQuantity))
+                    {
+                        oStorage.PartialQuantity -= oInOut.Quantity;
+                        B_Storage.UpdateStorage(oStorage);
+
+                        oProduct.TotalQuantity -= oInOut.Quantity;
+                        B_Product.UpdateProducts(oProduct);
+
+                        message = $"El producto {oProduct.ProductName} ha sido actualizado";
+                    }
+                    else
+                    {
+                        message = $"No existe la cantidad suficiente en bodega para el {oProduct.ProductName}";
+                    }
+                }
+                else
+                {
+                    oStorage.PartialQuantity += oInOut.Quantity;
+                    B_Storage.UpdateStorage(oStorage);
+
+                    oProduct.TotalQuantity += oInOut.Quantity;
+                    B_Product.UpdateProducts(oProduct);
+
+                    message = $"El producto {oProduct.ProductName} ha sido actualizado";
+                }
+            }
+            else
+            {
+                message = "Error: No se pudo obtener información del producto.";
+            }
+        }
+        catch (Exception ex)
+        {
+            message = $"Error: {ex.Message}";
+        }
+    }
+    */
+
+    private bool esMayorCero(int cant, int StorageCant)
+    {
+        return StorageCant >= cant;
+    }
+}
