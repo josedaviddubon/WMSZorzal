@@ -23,7 +23,7 @@ namespace Entities
 
         [Required]
 
-        public bool IsOut { get; set; }
+        public bool IsInput { get; set; }
 
 
         public string StorageId { get; set; }

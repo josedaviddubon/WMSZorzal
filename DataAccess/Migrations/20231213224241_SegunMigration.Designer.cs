@@ -4,6 +4,7 @@ using DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(ZorzalContext))]
-    partial class ZorzalContextModelSnapshot : ModelSnapshot
+    [Migration("20231213224241_SegunMigration")]
+    partial class SegunMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -224,13 +226,13 @@ namespace DataAccess.Migrations
                     b.HasData(
                         new
                         {
-                            WarehouseID = "9ae0518d-003e-41aa-a562-f3dc2df9a16b",
+                            WarehouseID = "66258d5a-5a5f-4dc3-859c-1b1e0e045a85",
                             WarehouseAddress = "Calle Uno",
                             WarehouseName = "Bodega Central"
                         },
                         new
                         {
-                            WarehouseID = "2dba6292-2403-41f4-b696-fded8d16b9f1",
+                            WarehouseID = "0fc2dfb9-55ae-4b1d-b5ed-37bc4de5cab0",
                             WarehouseAddress = "Calle 33",
                             WarehouseName = "Bodega Norte"
                         });

@@ -68,7 +68,7 @@
 
     <div class="form-group">
         <div class="form-check">
-            <input id="chkIsOut" class="form-check-input" type="checkbox" @bind="oInOut.IsOut" />
+            <input id="chkIsOut" class="form-check-input" type="checkbox" @bind="oInOut.IsInput" />
             <label class="form-check-label" for="chkIsOut">¿Es una Entrada?</label>
         </div>
     </div>
@@ -95,7 +95,7 @@
 
     StorageEntity oStorage = new StorageEntity();
 
-    string buttonValue => oInOut.IsOut ? "Registrar Salida" : "Registrar Entrada";
+    string buttonValue => oInOut.IsInput ? "Registrar Entrada" : "Registrar Salida";
     string message;
 
     protected override async Task OnInitializedAsync()
@@ -115,14 +115,24 @@
         oStorage = storages.LastOrDefault(s => s.StorageId == oInOut.StorageId);
         oProduct = oStorage.Product;
 
-        if (oInOut.IsOut)
+        if (oInOut.IsInput)
+        {
+            oStorage.PartialQuantity = oStorage.PartialQuantity + oInOut.Quantity;
+            B_Storage.UpdateStorage(oStorage);
+
+            oProduct.TotalQuantity = oProduct.TotalQuantity + oInOut.Quantity;
+            B_Product.UpdateProducts(oProduct);
+
+            message = $"El producto {oProduct.ProductName} ha sido actualizado";
+        }
+        else
         {
             if (esMayorCero(oInOut.Quantity, oStorage.PartialQuantity))
             {
-                oStorage.PartialQuantity = oStorage.PartialQuantity + oInOut.Quantity;
+                oStorage.PartialQuantity = oStorage.PartialQuantity - oInOut.Quantity;
                 B_Storage.UpdateStorage(oStorage);
 
-                oProduct.TotalQuantity = oProduct.TotalQuantity + oInOut.Quantity;
+                oProduct.TotalQuantity = oProduct.TotalQuantity - oInOut.Quantity;
                 B_Product.UpdateProducts(oProduct);
                 message = $"El producto {oProduct.ProductName} ha sido actualizado";
             }
@@ -131,69 +141,16 @@
                 message = $"No existe la cantidad suficiente en bodega para el {oProduct.ProductName}";
                 //message = $"No existe la cantidad suficiente en bodega para el {oProduct.ProductName}";
             }
-        }
-        else
-        {
-            oStorage.PartialQuantity = oStorage.PartialQuantity - oInOut.Quantity;
-            B_Storage.UpdateStorage(oStorage);
 
-            oProduct.TotalQuantity = oProduct.TotalQuantity - oInOut.Quantity;
-            B_Product.UpdateProducts(oProduct);
-
-            message = $"El producto {oProduct.ProductName} ha sido actualizado";
         }
     }
-
-        /*
-        try
-        {
-            oStorage = storages.LastOrDefault(s => s.StorageId == oInOut.StorageId);
-            oProduct = oStorage?.Product;
-
-            if (oProduct != null)
-            {
-                if (oInOut.IsOut)
-                {
-                    if (esMayorCero(oInOut.Quantity, oStorage.PartialQuantity))
-                    {
-                        oStorage.PartialQuantity -= oInOut.Quantity;
-                        B_Storage.UpdateStorage(oStorage);
-
-                        oProduct.TotalQuantity -= oInOut.Quantity;
-                        B_Product.UpdateProducts(oProduct);
-
-                        message = $"El producto {oProduct.ProductName} ha sido actualizado";
-                    }
-                    else
-                    {
-                        message = $"No existe la cantidad suficiente en bodega para el {oProduct.ProductName}";
-                    }
-                }
-                else
-                {
-                    oStorage.PartialQuantity += oInOut.Quantity;
-                    B_Storage.UpdateStorage(oStorage);
-
-                    oProduct.TotalQuantity += oInOut.Quantity;
-                    B_Product.UpdateProducts(oProduct);
-
-                    message = $"El producto {oProduct.ProductName} ha sido actualizado";
-                }
-            }
-            else
-            {
-                message = "Error: No se pudo obtener información del producto.";
-            }
-        }
-        catch (Exception ex)
-        {
-            message = $"Error: {ex.Message}";
-        }
-    }
-    */
 
     private bool esMayorCero(int cant, int StorageCant)
     {
-        return StorageCant >= cant;
+        if (StorageCant >= cant)
+        {
+            return true;
+        }
+        return false;
     }
 }
