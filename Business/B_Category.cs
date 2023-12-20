@@ -18,6 +18,13 @@ namespace Business
             }
         }
 
+        public static CategoryEntity CategoryById(string id)
+        {
+            using (var db = new ZorzalContext())
+            {
+                return db.Categories.ToList().LastOrDefault(c => c.CategoryID == id);
+            }
+        }
         public static void CreateCategory(CategoryEntity oCategory)
         {
             using(var db = new ZorzalContext())

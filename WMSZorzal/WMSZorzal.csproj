@@ -7,8 +7,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Grpc.AspNetCore" Version="2.49.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Business\Business.csproj" />
     <ProjectReference Include="..\Entities\Entities.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Protobuf Include="..\..\BellumMaterializeN\CRMDesktop\Protos\Honduras.proto" GrpcServices="Server">
+      <Link>Protos\Honduras.proto</Link>
+    </Protobuf>
   </ItemGroup>
 
 </Project>

@@ -1,42 +1,6 @@
 ﻿@using Entities
 @using Business
 
-@*<div class="form-group">
-    <select class="form-control" @onchange="OnChangeWareHouse">
-        <option value="">Seleccione una bodega...</option>
-        @foreach (var warehouse in warehouses)
-        {
-            <option value="@warehouse.WarehouseID">@warehouse.WarehouseName</option>
-        }
-    </select>
-</div>
-<hr />
-
-<EditForm Model="oInOut">
-    <div class="form-group">
-        <InputSelect class="form-control" @bind-Value="oInOut.StorageId">
-            <option value="">Seleccione un Producto...</option>
-            @foreach (var storage in storages)
-            {
-                <option value="@storage.StorageId">@storage.Product.ProductName</option>
-            }
-        </InputSelect>
-
-    </div>
-    <div class="form-group">
-        <label>Cant.</label>
-        <InputNumber class="form-control" @bind-Value="oInOut.Quantity" />
-    </div>
-    <div class="form-group">
-        <div class="form-check">
-            <input id="chkIsOut" class="form-check-input" type="checkbox" @bind="oInOut.IsOut" />
-            <label class="form-check-label" for="chkIsOut">¿Es una entrada?</label>
-        </div>
-    </div>
-
-    <input control="form-group" type="button" value="@buttonValue" @onclick="SaveInOut" />
-
-</EditForm>*@
 <div class="form-group">
     <label for="ddlWarehouses">Bodega:</label>
     <select id="ddlWarehouses" class="form-control" @onchange="OnChangeWareHouse">
@@ -72,9 +36,10 @@
             <label class="form-check-label" for="chkIsOut">¿Es una Entrada?</label>
         </div>
     </div>
+    <br />
 
-    <div class="form-group">
-        <button type="button" class="btn btn-primary" @onclick="SaveInOut">@buttonValue</button>
+    <div class="form-group mb-4">
+        <button type="button" class="btn btn-primary" style="width: 200px; height: 40px;" @onclick="SaveInOut">@buttonValue</button>
     </div>
 </EditForm>
 
